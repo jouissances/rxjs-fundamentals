@@ -3,6 +3,9 @@ import { fromEvent } from 'rxjs';
 const button = document.getElementById('create-notification');
 const notificationMessages = document.getElementById('notification-messages');
 
+const observable$ = fromEvent(button, 'click');
+observable$.subscribe((e) => addMessageToDOM());
+
 const createNotificationElement = () => {
   const element = document.createElement('article');
   element.innerText = 'Something happened.';

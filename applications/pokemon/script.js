@@ -8,6 +8,7 @@ import {
   tap,
   of,
   merge,
+  pluck,
   from,
   filter,
   catchError,
@@ -26,5 +27,21 @@ import {
   search,
   form,
 } from '../pokemon/utilities';
+import { response } from 'express';
 
-const endpoint = 'http://localhost:3333/api/pokemon?delay=100';
+const endpoint = 'http://localhost:3333/api/pokemon/search/';
+
+const search$ = fromEvent(search, 'input').pipe(
+  debounceTime(300),
+  map((e) => e.target.value),
+  mergeMap((searchTerm) => {
+    return fromFetch(endpoint + searchTerm).pipe(
+      mergeMap((response) => response.json())
+    );
+  }),
+  tap(clearResults),
+  pluck('pokemon'),
+  tap(addResults),
+);
+
+search$.subscribe();
